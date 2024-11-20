@@ -14,6 +14,7 @@ namespace Calculadora_Patron_Capas
         void Clear();
         string EntradaActual();
         bool Primo();
-        IEnumerable<Operaciones> ObtenerHistorial();
+        string Binario();
+        void ObtenerHistorial();
     }
 }

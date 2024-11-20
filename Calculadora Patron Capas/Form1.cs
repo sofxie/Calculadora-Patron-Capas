@@ -5,12 +5,13 @@ namespace Calculadora_Patron_Capas
 {
     public partial class Calculadora : Form
     {
+        Historial form2;
         private readonly IAplicacion<Operaciones> _aplicacion;
         public Calculadora()
         {
             InitializeComponent();
-            var _dominio = new Persistencia();
-            _aplicacion = new Aplicacion(_dominio);
+            form2 = new Historial();
+            _aplicacion = new Aplicacion();
             // Boton de numero de 0-9
             button13.Click += BotonNumero_Click;
             button10.Click += BotonNumero_Click;
@@ -71,12 +72,7 @@ namespace Calculadora_Patron_Capas
         }
         private void button2_Click(object sender, EventArgs e)
         {
-            var boton = sender as Button;
-            if (boton != null)
-            {
-                _aplicacion.ObtenerHistorial();
-                textBox.Text = _aplicacion.EntradaActual();
-            }
+            form2.ShowDialog();
         }
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
@@ -103,6 +99,16 @@ namespace Calculadora_Patron_Capas
 
         private void button14_Click(object sender, EventArgs e)
         {
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            var boton = sender as Button;
+            if (boton != null)
+            {
+                _aplicacion.Binario();
+                textBox.Text = _aplicacion.EntradaActual();
+            }
         }
     }
 }

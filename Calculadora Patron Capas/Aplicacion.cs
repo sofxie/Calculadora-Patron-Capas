@@ -16,12 +16,10 @@ namespace Calculadora_Patron_Capas
         private double _num2;
         private double _result;
 
-        private readonly IPersistencia<Operaciones> _persistencia;
         private readonly Dominio _dominio;
 
-        public Aplicacion(IPersistencia<Operaciones> persistencia)
+        public Aplicacion()
         {
-            _persistencia = persistencia;
             _dominio = new Dominio();
         }
         public void AgregarDigito(string digit)
@@ -34,7 +32,17 @@ namespace Calculadora_Patron_Capas
         }
         public void EliminarDigito()
         {
-
+            if (!string.IsNullOrEmpty(_entradaactual))
+            {
+                _entradaactual = _entradaactual.Remove(_entradaactual.Length - 1);
+            }
+        }
+        public string Binario()
+        {
+            string num =_entradaactual.ToString();
+            string binary = _dominio.Binario(num);
+            _entradaactual = binary.ToString();
+            return binary;
         }
         public void AgregarOperacion(string operacion)
         {
@@ -49,25 +57,28 @@ namespace Calculadora_Patron_Capas
         {
             if (string.IsNullOrEmpty(_entradaactual) || string.IsNullOrEmpty(_operacion))
             {
-                _entradaactual = _entradaactual;
-                return -1;
+                double num = Convert.ToDouble(_entradaactual);
+                var operacion = new Operaciones
+                {
+                    Num1 = num,
+                    Num2 = null, // No se usó un segundo número.
+                    Operacion = null, // No hubo operación.
+                    Resultado = num.ToString()
+                };
+                _dominio.AgregarOperaciones(operacion);
+                _entradaactual = num.ToString();
+                return num; // Retorna el número directamente.
+                
             }
             else
             {
                 _num2 = Convert.ToDouble(_entradaactual);
                 Console.WriteLine(_num1);
                 _result = _dominio.Calcular(_num1, _num2, _operacion);
-
-                // Guardar en el historial
-                var operacion = new Operaciones
+                if (_result == -1)
                 {
-                    Num1 = _num1,
-                    Num2 = _num2,
-                    Operacion = _operacion,
-                    Resultado = _result
-                };
-                _persistencia.AgregarOperaciones(operacion);
-
+                    _entradaactual = "Error";
+                }
                 _entradaactual = _result.ToString();
                 return _result;
             }
@@ -82,23 +93,13 @@ namespace Calculadora_Patron_Capas
         {
             return _entradaactual;
         }
-        public IEnumerable<Operaciones> ObtenerHistorial() => _persistencia.ObtenerHistorial();
+        public void ObtenerHistorial() => _dominio.ObtenerHistorial();
         public bool Primo()
         {
-            double d = Convert.ToDouble(_entradaactual);
-            if (d == (int)d)
-            {
-                int num = (int)d;
-
-                bool esPrimo = _dominio.Primo(num);
-                _entradaactual = esPrimo.ToString();
-                return esPrimo;
-            }
-            else
-            {
-                _entradaactual = "False";
-                return false;
-            }
+            double num = Convert.ToDouble(_entradaactual);
+            bool esPrimo = _dominio.Primo(num);
+            _entradaactual = esPrimo.ToString();
+            return esPrimo;
         }
     }
 }

@@ -1,0 +1,10 @@
+﻿ 9  Primo  False
+ 5  Primo  True
+5.3 + 3.3 = 8.6
+5.3 + 3.3 = 8.6
+ 8.6  Primo  False
+9  Binario  1001
+3  Binario  11
+8  Binario  1000
+75  Binario  1001011
+9   = 9
