@@ -28,7 +28,7 @@ namespace Calculadora_Patron_Capas
             var operaciones = new List<Operaciones>();
             foreach (var linea in File.ReadAllLines(@"C:\Users\sofia\source\repos\Calculadora Patron Capas\Calculadora Patron Capas\Bitacora.txt"))
             {
-                var partes = linea.Split(' '); 
+                var partes = linea.Split(' ');
                 operaciones.Add(new Operaciones
                 {
                     Num1 = double.Parse(partes[0]),
@@ -38,6 +38,10 @@ namespace Calculadora_Patron_Capas
                 });
             }
             return operaciones;
+        }
+        public string LeerHistorialComoTexto()
+        {
+            return File.Exists(@"C:\Users\sofia\source\repos\Calculadora Patron Capas\Calculadora Patron Capas\Bitacora.txt") ? File.ReadAllText(@"C:\Users\sofia\source\repos\Calculadora Patron Capas\Calculadora Patron Capas\Bitacora.txt") : "El historial está vacío.";
         }
     }
 }

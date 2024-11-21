@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace Calculadora_Patron_Capas
 {
@@ -10,10 +11,46 @@ namespace Calculadora_Patron_Capas
     {
         private readonly IPersistencia<Operaciones> _persistencia;
         string valores_bin = "";
-        bool IsBinary = false;
+        private List<double> memoria = new List<double>();
+        private const int MemoriaDisponible = 10;
+
         public Dominio()
         {
             _persistencia = new Persistencia();
+        }
+        public void GuardarMemoria(double Num)
+        {
+            if (memoria.Count >= MemoriaDisponible)
+            {
+                memoria.RemoveAt(0); // Eliminar el primer número (el más antiguo)
+            }
+            memoria.Add(Num);
+            string memoriaTexto = string.Join(", ", memoria);
+
+            var op = new Operaciones
+            {
+                Num1 = Num,
+                Operacion = "M+",
+                Resultado = memoriaTexto
+            };
+            _persistencia.AgregarOperaciones(op);
+        }
+        public double Avg()
+        {
+            if (memoria.Count == 0)
+            {
+                return 0;
+            }
+            double promedio = memoria.Average();
+            string memoriaTexto = string.Join(", ", memoria);
+            var op = new Operaciones
+            {
+                Num1 = promedio,
+                Operacion = "Avg",
+                Resultado = memoriaTexto
+            };
+            _persistencia.AgregarOperaciones(op);
+            return promedio;
         }
         public bool Primo(double num)
         {
@@ -117,9 +154,17 @@ namespace Calculadora_Patron_Capas
         {
             _persistencia.AgregarOperaciones(operacion);
         }
-        public void ObtenerHistorial()
+        public string ObtenerHistorialComoTexto()
         {
-            _persistencia.ObtenerHistorial();
+            string rutaArchivo = @"C:\Users\sofia\source\repos\Calculadora Patron Capas\Calculadora Patron Capas\Bitacora.txt";
+
+            if (!File.Exists(rutaArchivo))
+            {
+                return "El archivo de historial no existe.";
+            }
+
+            // Leer todo el archivo y devolver su contenido como texto.
+            return File.ReadAllText(rutaArchivo);
         }
     }
 }

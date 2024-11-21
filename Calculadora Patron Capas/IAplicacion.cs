@@ -15,6 +15,9 @@ namespace Calculadora_Patron_Capas
         string EntradaActual();
         bool Primo();
         string Binario();
-        void ObtenerHistorial();
+        bool CambioBinary();
+        void Memoria();
+        double AvgMemoria();
+        List<string> ObtenerHistorialComoLista();
     }
 }

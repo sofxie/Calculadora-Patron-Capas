@@ -10,5 +10,6 @@ namespace Calculadora_Patron_Capas
     {
         void AgregarOperaciones(Operaciones operacion);
         IEnumerable<Operaciones> ObtenerHistorial();
+        string LeerHistorialComoTexto();
     }
 }

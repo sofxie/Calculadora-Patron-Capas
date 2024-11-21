@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.Tracing;
+using System.IO;
 using System.Linq;
 using System.Security.Permissions;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace Calculadora_Patron_Capas
 {
@@ -15,6 +17,9 @@ namespace Calculadora_Patron_Capas
         private string _operacion;
         private double _num2;
         private double _result;
+        private double _memoryNum;
+        bool IsBinary = false;
+        private Historial _form2;
 
         private readonly Dominio _dominio;
 
@@ -30,15 +35,29 @@ namespace Calculadora_Patron_Capas
             }
             _entradaactual += digit;
         }
-        public void EliminarDigito()
+        public void Memoria()
         {
-            if (!string.IsNullOrEmpty(_entradaactual))
+            bool Binario = CambioBinary();
+            if (_entradaactual == "False" || _entradaactual == "True" || Binario)
             {
-                _entradaactual = _entradaactual.Remove(_entradaactual.Length - 1);
+                _entradaactual = "Dato Inválido";
             }
+            else
+            {
+                _memoryNum = Convert.ToDouble(_entradaactual);
+                _dominio.GuardarMemoria(_memoryNum);
+                _entradaactual = "";
+            }
+        }
+        public double AvgMemoria()
+        {
+            double avg = _dominio.Avg();
+            _entradaactual = avg.ToString();
+            return avg;
         }
         public string Binario()
         {
+            IsBinary = true;
             string num =_entradaactual.ToString();
             string binary = _dominio.Binario(num);
             _entradaactual = binary.ToString();
@@ -85,15 +104,32 @@ namespace Calculadora_Patron_Capas
         }
         public void Clear()
         {
+            IsBinary = false;
             _entradaactual = "";
             _num1 = 0;
             _operacion = null;
+
         }
         public string EntradaActual()
         {
             return _entradaactual;
         }
-        public void ObtenerHistorial() => _dominio.ObtenerHistorial();
+        public bool CambioBinary()
+        {
+            return IsBinary;
+        }
+        public List<string> ObtenerHistorialComoLista()
+        {
+            string rutaArchivo = @"C:\Users\sofia\source\repos\Calculadora Patron Capas\Calculadora Patron Capas\Bitacora.txt";
+
+            if (!File.Exists(rutaArchivo))
+            {
+                return new List<string> { "El archivo de historial no existe." };
+            }
+
+            // Leer todas las líneas del archivo y devolverlas como lista.
+            return File.ReadAllLines(rutaArchivo).ToList();
+        }
         public bool Primo()
         {
             double num = Convert.ToDouble(_entradaactual);
