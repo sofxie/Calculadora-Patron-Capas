@@ -91,9 +91,23 @@ namespace Calculadora_Patron_Capas
                 case "X":
                     resultado = num1 * num2;
                     break;
+                case "*":
+                    resultado = num1 * num2;
+                    break;
+                case "/":
+                    if (num2 == 0)
+                    {
+                        resultado = -1;
+                        throw new DivideByZeroException("No se puede dividir entre cero.");
+                    }
+                    resultado = num1 / num2;
+                    break;
                 case "÷":
                     if (num2 == 0)
+                    {
+                        resultado = -1;
                         throw new DivideByZeroException("No se puede dividir entre cero.");
+                    }
                     resultado = num1 / num2;
                     break;
                 default:

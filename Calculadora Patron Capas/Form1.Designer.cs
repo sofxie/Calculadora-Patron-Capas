@@ -78,7 +78,6 @@
             this.textBox.Size = new System.Drawing.Size(382, 49);
             this.textBox.TabIndex = 1;
             this.textBox.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
-            this.textBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBox_KeyPress_1);
             // 
             // button3
             // 
@@ -375,6 +374,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Name = "Calculadora";
             this.Text = "Calculadora Capas";
+            this.Load += new System.EventHandler(this.Calculadora_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

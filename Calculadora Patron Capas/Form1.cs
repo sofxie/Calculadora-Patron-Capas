@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace Calculadora_Patron_Capas
@@ -13,6 +14,8 @@ namespace Calculadora_Patron_Capas
             InitializeComponent();
             _aplicacion = new Aplicacion();
             form2 = new Historial(_aplicacion);
+            this.KeyPreview = true; // Habilita la captura de teclas en el formulario
+            this.KeyPress += new KeyPressEventHandler(Calculadora_KeyPress);
             // Boton de numero de 0-9
             button13.Click += BotonNumero_Click;
             button10.Click += BotonNumero_Click;
@@ -141,19 +144,6 @@ namespace Calculadora_Patron_Capas
             }
         }
 
-        private void textBox_KeyPress_1(object sender, KeyPressEventArgs e)
-        {
-            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar) && (e.KeyChar != '.'))
-            {
-                e.Handled = true;
-            }
-
-            // solo 1 punto decimal
-            if ((e.KeyChar == '.') && ((sender as TextBox).Text.IndexOf('.') > -1))
-            {
-                e.Handled = true;
-            }
-        }
 
         private void buttonSumar_Click(object sender, EventArgs e)
         {
@@ -230,6 +220,67 @@ namespace Calculadora_Patron_Capas
         }
 
         private void button3_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Calculadora_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            switch (e.KeyChar)
+            {
+                // Operaciones matemáticas básicas
+                case '+':
+                case '-':
+                case '*':
+                case '/':
+                    _aplicacion.AgregarOperacion(e.KeyChar.ToString());
+                    textBox.Text = _aplicacion.EntradaActual(); // Actualizar el texto en el TextBox
+                    e.Handled = true; // Prevenir que el TextBox maneje la tecla
+                    break;
+
+                // Igual (calcular resultado)
+                case '=':
+                    double resultado = _aplicacion.Calcular();
+                    textBox.Text = _aplicacion.EntradaActual(); // Mostrar el resultado
+                    e.Handled = true; // Prevenir que el TextBox maneje la tecla
+                    break;
+
+                // Punto decimal (solo uno permitido)
+                case '.':
+                    if (!textBox.Text.Contains("."))
+                    {
+                        _aplicacion.AgregarDigito(".");
+                        textBox.Text = _aplicacion.EntradaActual();
+                    }
+                    e.Handled = true; // Prevenir que el TextBox maneje la tecla
+                    break;
+
+                // Limpiar pantalla (C o c)
+                case 'C':
+                case 'c':
+                    _aplicacion.Clear();
+                    textBox.Text = _aplicacion.EntradaActual(); ; // Limpiar el texto del TextBox
+                    e.Handled = true; // Prevenir que el TextBox maneje la tecla
+                    break;
+
+                // Dígitos (0-9)
+                default:
+                    if (char.IsDigit(e.KeyChar))
+                    {
+                        _aplicacion.AgregarDigito(e.KeyChar.ToString());
+                        textBox.Text = _aplicacion.EntradaActual(); // Actualizar el texto en el TextBox
+                        e.Handled = true; // Prevenir que el TextBox maneje la tecla
+                    }
+                    else if (!char.IsControl(e.KeyChar))
+                    {
+                        // Bloquear caracteres no válidos
+                        e.Handled = true;
+                    }
+                    break;
+            }
+        }
+
+        private void Calculadora_Load(object sender, EventArgs e)
         {
 
         }
