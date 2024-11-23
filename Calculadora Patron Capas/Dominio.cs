@@ -126,44 +126,86 @@ namespace Calculadora_Patron_Capas
             _persistencia.AgregarOperaciones(op);
             return resultado;
         }
-        
+
 
         public string Binario(string dec)
         {
             valores_bin = "";
-            int n = int.Parse(dec.ToString());
-            string binario = "";
-            int l;
-            if (n != 1)
+
+            try
             {
-                for (l = n; l != 0 && l != 1; l = l / 2)
+                // Intentar convertir la entrada a double
+                if (double.TryParse(dec, out double numero))
                 {
-                    binario = (l % 2) + binario;
-                }
-                if (l == 0)
-                {
-                    valores_bin += "0";
+                    // Verificar si el número es negativo
+                    if (numero < 0)
+                    {
+                        return "ERROR: No se pueden convertir números negativos a binario.";
+                    }
+
+                    // Separar parte entera y fraccionaria
+                    int parteEntera = (int)Math.Floor(numero);
+                    double parteFraccionaria = numero - parteEntera;
+
+                    // Convertir parte entera a binario
+                    string binarioEntero = "";
+                    if (parteEntera == 0)
+                    {
+                        binarioEntero = "0";
+                    }
+                    else
+                    {
+                        for (int l = parteEntera; l > 0; l /= 2)
+                        {
+                            binarioEntero = (l % 2) + binarioEntero;
+                        }
+                    }
+
+                    // Convertir parte fraccionaria a binario
+                    string binarioFraccionario = "";
+                    int limiteDigitos = 10; // Limitar a 10 dígitos para evitar bucles infinitos
+                    while (parteFraccionaria > 0 && binarioFraccionario.Length < limiteDigitos)
+                    {
+                        parteFraccionaria *= 2;
+                        if (parteFraccionaria >= 1)
+                        {
+                            binarioFraccionario += "1";
+                            parteFraccionaria -= 1;
+                        }
+                        else
+                        {
+                            binarioFraccionario += "0";
+                        }
+                    }
+
+                    // Combinar parte entera y fraccionaria
+                    valores_bin = binarioFraccionario.Length > 0
+                        ? $"{binarioEntero}.{binarioFraccionario}"
+                        : binarioEntero;
+
+                    // Guardar en el historial
+                    var op = new Operaciones
+                    {
+                        Num1 = numero,
+                        Num2 = null,
+                        Operacion = "Binario",
+                        Resultado = valores_bin
+                    };
+                    _persistencia.AgregarOperaciones(op);
+
+                    return valores_bin;
                 }
                 else
                 {
-                    binario = 1 + binario;
-                    valores_bin += binario;
+                    return "ERROR: Entrada no válida.";
                 }
             }
-            else
+            catch (Exception ex)
             {
-                valores_bin += "1";
+                return $"ERROR: {ex.Message}";
             }
-            var op = new Operaciones
-            {
-                Num1 = n,
-                Num2 = null,
-                Operacion = "Binario",
-                Resultado = valores_bin
-            };
-            _persistencia.AgregarOperaciones(op);
-            return valores_bin;
         }
+
         public void AgregarOperaciones(Operaciones operacion)
         {
             _persistencia.AgregarOperaciones(operacion);

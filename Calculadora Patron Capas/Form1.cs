@@ -38,6 +38,10 @@ namespace Calculadora_Patron_Capas
         }
         private void BotonOperacion_Click(object sender, EventArgs e)
         {
+            if (textBox.Text == "" || textBox.Text == ".")
+            {
+                textBox.Text = "Error";
+            }
             bool Binario = _aplicacion.CambioBinary();
             var boton = sender as Button;
             if (boton != null && textBox.Text != "ERROR" && textBox.Text != "True" && textBox.Text != "False" && !Binario)
@@ -48,8 +52,9 @@ namespace Calculadora_Patron_Capas
         }
         private void BotonNumero_Click(object sender, EventArgs e)
         {
+            bool Binario = _aplicacion.CambioBinary();
             var boton = sender as Button;
-            if (boton != null && textBox.Text != "ERROR" && textBox.Text != "True" && textBox.Text != "False")
+            if (boton != null && textBox.Text != "ERROR" && textBox.Text != "True" && textBox.Text != "False" && !Binario)
             {
                 // Delegar a la capa de aplicación
                 _aplicacion.AgregarDigito(boton.Text);
@@ -58,6 +63,10 @@ namespace Calculadora_Patron_Capas
         }
         private void buttonIgual_Click(object sender, EventArgs e)
         {
+            if (textBox.Text == "" || textBox.Text == ".")
+            {
+                textBox.Text = "Error";
+            }
             var boton = sender as Button;
             if (boton != null)
             {
@@ -226,57 +235,61 @@ namespace Calculadora_Patron_Capas
 
         private void Calculadora_KeyPress(object sender, KeyPressEventArgs e)
         {
-            switch (e.KeyChar)
+            bool Binario = _aplicacion.CambioBinary();
+            if (textBox.Text != "ERROR" && textBox.Text != "True" && textBox.Text != "False" && !Binario)
             {
-                // Operaciones matemáticas básicas
-                case '+':
-                case '-':
-                case '*':
-                case '/':
-                    _aplicacion.AgregarOperacion(e.KeyChar.ToString());
-                    textBox.Text = _aplicacion.EntradaActual(); // Actualizar el texto en el TextBox
-                    e.Handled = true; // Prevenir que el TextBox maneje la tecla
-                    break;
-
-                // Igual (calcular resultado)
-                case '=':
-                    double resultado = _aplicacion.Calcular();
-                    textBox.Text = _aplicacion.EntradaActual(); // Mostrar el resultado
-                    e.Handled = true; // Prevenir que el TextBox maneje la tecla
-                    break;
-
-                // Punto decimal (solo uno permitido)
-                case '.':
-                    if (!textBox.Text.Contains("."))
-                    {
-                        _aplicacion.AgregarDigito(".");
-                        textBox.Text = _aplicacion.EntradaActual();
-                    }
-                    e.Handled = true; // Prevenir que el TextBox maneje la tecla
-                    break;
-
-                // Limpiar pantalla (C o c)
-                case 'C':
-                case 'c':
-                    _aplicacion.Clear();
-                    textBox.Text = _aplicacion.EntradaActual(); ; // Limpiar el texto del TextBox
-                    e.Handled = true; // Prevenir que el TextBox maneje la tecla
-                    break;
-
-                // Dígitos (0-9)
-                default:
-                    if (char.IsDigit(e.KeyChar))
-                    {
-                        _aplicacion.AgregarDigito(e.KeyChar.ToString());
+                switch (e.KeyChar)
+                {
+                    // Operaciones matemáticas básicas
+                    case '+':
+                    case '-':
+                    case '*':
+                    case '/':
+                        _aplicacion.AgregarOperacion(e.KeyChar.ToString());
                         textBox.Text = _aplicacion.EntradaActual(); // Actualizar el texto en el TextBox
                         e.Handled = true; // Prevenir que el TextBox maneje la tecla
-                    }
-                    else if (!char.IsControl(e.KeyChar))
-                    {
-                        // Bloquear caracteres no válidos
-                        e.Handled = true;
-                    }
-                    break;
+                        break;
+
+                    // Igual (calcular resultado)
+                    case '=':
+                        double resultado = _aplicacion.Calcular();
+                        textBox.Text = _aplicacion.EntradaActual(); // Mostrar el resultado
+                        e.Handled = true; // Prevenir que el TextBox maneje la tecla
+                        break;
+
+                    // Punto decimal (solo uno permitido)
+                    case '.':
+                        if (!textBox.Text.Contains("."))
+                        {
+                            _aplicacion.AgregarDigito(".");
+                            textBox.Text = _aplicacion.EntradaActual();
+                        }
+                        e.Handled = true; // Prevenir que el TextBox maneje la tecla
+                        break;
+
+                    // Limpiar pantalla (C o c)
+                    case 'C':
+                    case 'c':
+                        _aplicacion.Clear();
+                        textBox.Text = _aplicacion.EntradaActual(); ; // Limpiar el texto del TextBox
+                        e.Handled = true; // Prevenir que el TextBox maneje la tecla
+                        break;
+
+                    // Dígitos (0-9)
+                    default:
+                        if (char.IsDigit(e.KeyChar))
+                        {
+                            _aplicacion.AgregarDigito(e.KeyChar.ToString());
+                            textBox.Text = _aplicacion.EntradaActual(); // Actualizar el texto en el TextBox
+                            e.Handled = true; // Prevenir que el TextBox maneje la tecla
+                        }
+                        else if (!char.IsControl(e.KeyChar))
+                        {
+                            // Bloquear caracteres no válidos
+                            e.Handled = true;
+                        }
+                        break;
+                }
             }
         }
 

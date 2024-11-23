@@ -108,7 +108,6 @@ namespace Calculadora_Patron_Capas
             _entradaactual = "";
             _num1 = 0;
             _operacion = null;
-
         }
         public string EntradaActual()
         {
